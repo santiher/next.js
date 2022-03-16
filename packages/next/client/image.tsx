@@ -600,27 +600,27 @@ export default function Image({
       !perfObserver &&
       window.PerformanceObserver
     ) {
-      perfObserver = new PerformanceObserver((entryList) => {
-        for (const entry of entryList.getEntries()) {
-          // @ts-ignore - missing "LargestContentfulPaint" class with "element" prop
-          const imgSrc = entry?.element?.src || ''
-          const lcpImage = allImgs.get(imgSrc)
-          if (
-            lcpImage &&
-            !lcpImage.priority &&
-            lcpImage.placeholder !== 'blur' &&
-            !lcpImage.src.startsWith('data:') &&
-            !lcpImage.src.startsWith('blob:')
-          ) {
-            // https://web.dev/lcp/#measure-lcp-in-javascript
-            warnOnce(
-              `Image with src "${lcpImage.src}" was detected as the Largest Contentful Paint (LCP). Please add the "priority" property if this image is above the fold.` +
-                `\nRead more: https://nextjs.org/docs/api-reference/next/image#priority`
-            )
-          }
-        }
-      })
       try {
+        perfObserver = new PerformanceObserver((entryList) => {
+          for (const entry of entryList.getEntries()) {
+            // @ts-ignore - missing "LargestContentfulPaint" class with "element" prop
+            const imgSrc = entry?.element?.src || ''
+            const lcpImage = allImgs.get(imgSrc)
+            if (
+              lcpImage &&
+              !lcpImage.priority &&
+              lcpImage.placeholder !== 'blur' &&
+              !lcpImage.src.startsWith('data:') &&
+              !lcpImage.src.startsWith('blob:')
+            ) {
+              // https://web.dev/lcp/#measure-lcp-in-javascript
+              warnOnce(
+                `Image with src "${lcpImage.src}" was detected as the Largest Contentful Paint (LCP). Please add the "priority" property if this image is above the fold.` +
+                  `\nRead more: https://nextjs.org/docs/api-reference/next/image#priority`
+              )
+            }
+          }
+        })
         perfObserver.observe({
           type: 'largest-contentful-paint',
           buffered: true,
